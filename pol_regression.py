@@ -120,18 +120,19 @@ def main():
             w = 1
 
         # Make predictions based on training model
-        y_hat = prediction(x_test, w, degree)
-
-        # Plot predictions
-        plt.plot(x_test, y_hat, select_color(i))
+        y_hat_train = prediction(x_train, w, degree)
+        y_hat_test = prediction(x_test, w, degree)
 
         # Measure accuracy of model
         # RMSE of training set
-        train_error_array[i] = eval_pol_regression(x_train, y_train, y_hat, i)
+        train_error_array[i] = eval_pol_regression(x_train, y_train, y_hat_train, i)
 
         # RMSE of testing set
-        test_error_array[i] = eval_pol_regression(x_test, y_test, y_hat, i)
+        test_error_array[i] = eval_pol_regression(x_test, y_test, y_hat_test, i)
         # print("[Degree: {0}] - Train: {1:.4f}, Test: {2:.4f}".format(i, train_error, test_error))
+
+        # Plot predictions
+        plt.plot(x_test, y_hat_test, select_color(i))
     
     
     # Set plot between 5 and -5
