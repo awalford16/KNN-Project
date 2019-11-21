@@ -19,14 +19,15 @@ def initialise_centroids(dataset, k):
 def kmeans(dataset, k):
     centroids = initialise_centroids(dataset, k)
     cluster_assigned = 0
-    clusters = {centroid: [] for centroid in range(k)}
+    #clusters = {centroid: [] for centroid in range(k)}
 
-    max_it = 10
+    max_it = 100
     errors = []
     c_old = np.zeros((k, dataset.shape[1]))
     #prev_error = 100
     for i in range(max_it):
-
+        clusters = {centroid: [] for centroid in range(k)}
+        
         print(f"Interation {i}")
         for i in dataset:
             # Find closest cluster and store in dictionary
@@ -41,7 +42,7 @@ def kmeans(dataset, k):
         errors.append(error)
         c_old = deepcopy(centroids)
 
-        if int(error) == 0:
+        if error == 0:
             break
 
     return centroids, clusters, errors
