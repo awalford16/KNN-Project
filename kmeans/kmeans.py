@@ -6,7 +6,7 @@ import pandas as pd
 from copy import deepcopy
 import os
 
-def compute_euclidean_distance(vec_1, vec_2,ax):
+def compute_euclidean_distance(vec_1, vec_2, ax):
     return np.linalg.norm(vec_1 - vec_2, axis=ax)
 
 # Create k centroids within random positions
@@ -21,16 +21,35 @@ def kmeans(dataset, k):
     cluster_assigned = 0
     clusters = {centroid: [] for centroid in range(k)}
 
-    for i in dataset:
-        # Find closest cluster and sotre in dictionary
-        cluster_assigned = get_closest_cluster(i, k, centroids)
+    max_it = 10
+    errors = []
+    c_old = np.zeros((k, dataset.shape[1]))
+    #prev_error = 100
+    for i in range(max_it):
 
-        clusters[cluster_assigned].append(i)
+        print(f"Interation {i}")
+        for i in dataset:
+            # Find closest cluster and store in dictionary
+            cluster_assigned = get_closest_cluster(i, k, centroids)
+            clusters[cluster_assigned].append(i)
 
-    for i, c in enumerate(range(k)):
-        centroids[c] = compute_centroids(clusters[c])
+        for i, c in enumerate(range(k)):
+            centroids[c] = compute_centroids(clusters[c])
+            print(centroids[c])
+        
+        error = get_centroid_error(centroids, c_old)
+        errors.append(error)
+        c_old = deepcopy(centroids)
 
-    return centroids, clusters
+        if int(error) == 0:
+            break
+
+    return centroids, clusters, errors
+
+
+# Determine the error distance between new and old centroids
+def get_centroid_error(c_new, c_old):
+    return compute_euclidean_distance(c_new, c_old, None)
 
 
 # Find the closest cluster to a data point
@@ -60,6 +79,8 @@ def plot_data(data, centroids, clusters):
             ax.scatter(x[0], x[1], s=7, c=colors[c])
     
     ax.scatter(centroids[:,0], centroids[:,1], marker='*', s=150, c='r', label='centroid')
+    plt.xlabel('height')
+    plt.ylabel('tail length')
     plt.savefig(os.path.join('images', 'cluster.png'))
 
 
@@ -68,20 +89,9 @@ def main():
     data = dp.data_norm(df)
     k = 3
 
-    c_old = np.zeros((k, data[['height', 'tail length']].shape[1]))
+    centroids, clusters, errors = kmeans(data[['height', 'tail length']].values, k)
 
-    max_it = 10
-    for i in range(max_it):
-        print(f"Interation {i}")
-        centroids, clusters = kmeans(data[['height', 'tail length']].values, k)
-
-        error = compute_euclidean_distance(centroids, c_old, None)
-        c_old = deepcopy(centroids)
-
-        if error == 0:
-            break
-
-
+    print (errors)
     plot_data(data, centroids, clusters)
 
 if __name__ == '__main__':
