@@ -27,7 +27,7 @@ def kmeans(dataset, k):
     #prev_error = 100
     for i in range(max_it):
         clusters = {centroid: [] for centroid in range(k)}
-        
+
         print(f"Interation {i}")
         for i in dataset:
             # Find closest cluster and store in dictionary
@@ -85,6 +85,13 @@ def plot_data(data, centroids, clusters):
     plt.savefig(os.path.join('images', 'cluster.png'))
 
 
+def plot_error(error_data):
+    plt.figure()
+    plt.plot(error_data)
+    plt.ylabel("error")
+    plt.savefig(os.path.join('images', 'kmean_error.png'))
+
+
 def main():
     df = dp.load_data('dog_breeds.csv')
     data = dp.data_norm(df)
@@ -94,6 +101,7 @@ def main():
 
     print (errors)
     plot_data(data, centroids, clusters)
+    plot_error(errors)
 
 if __name__ == '__main__':
     main()
