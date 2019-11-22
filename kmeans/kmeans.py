@@ -34,16 +34,18 @@ def kmeans(dataset, k):
             cluster_assigned = get_closest_cluster(i, k, centroids)
             clusters[cluster_assigned].append(i)
 
-        for i, c in enumerate(range(k)):
+        for c in range(k):
             centroids[c] = compute_centroids(clusters[c])
             print(centroids[c])
         
         error = get_centroid_error(centroids, c_old)
         errors.append(error)
-        c_old = deepcopy(centroids)
 
         if error == 0:
             break
+
+        c_old = deepcopy(centroids)
+
 
     return centroids, clusters, errors
 
@@ -76,7 +78,7 @@ def plot_data(data, centroids, clusters):
 
     colors=['b', 'g', 'y']
     for c in clusters:
-        for j, x in enumerate(clusters[c]):
+        for x in clusters[c]:
             ax.scatter(x[0], x[1], s=7, c=colors[c])
     
     ax.scatter(centroids[:,0], centroids[:,1], marker='*', s=150, c='r', label='centroid')
@@ -89,6 +91,7 @@ def plot_error(error_data):
     plt.figure()
     plt.plot(error_data)
     plt.ylabel("error")
+    plt.xlabel("iterations")
     plt.savefig(os.path.join('images', 'kmean_error.png'))
 
 
